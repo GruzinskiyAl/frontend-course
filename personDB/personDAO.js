@@ -1,25 +1,32 @@
 let personDAO = null;
 let personList = {};
-let personListWebSQL = {};
 
 function setWindowStorage() {
     personDAO = new PersonDAOWindow;
-    renderPersonList(personDAO.getPersonList());
+    personDAO.getPersonList((persons)=>{
+        renderPersonList(persons);
+    })
 }
 
 function setLocalStorage() {
     personDAO = new PersonDAOLocal;
-    renderPersonList(personDAO.getPersonList());
+    personDAO.getPersonList((persons)=>{
+        renderPersonList(persons);
+    })
 }
 
 function setServerStorage() {
     personDAO = new PersonDAOServer;
-    renderPersonList(personDAO.getPersonList());
+    personDAO.getPersonList((persons)=>{
+        renderPersonList(persons);
+    })
 }
 
 function setIndexStorage() {
     personDAO = new PersonDAOIndex;
-    renderPersonList(personDAO.getPersonList());
+    personDAO.getPersonList((persons)=>{
+        renderPersonList(persons);
+    })
 }
 
 
@@ -33,16 +40,16 @@ class PersonDAOWindow{
         }
     }
 
-    getPersonList() {
-        return personList;
+    getPersonList(render) {
+        render(personList);
     }
 
     createPerson(person){
         if(!personList[person.id]) personList[person.id] = person;
     }
 
-    getPerson(id){
-        return personList[id];
+    getPerson(id, render){
+        render(personList[id]);
     }
 
     updatePerson(person){
@@ -64,32 +71,44 @@ class PersonDAOLocal{
         }
     }
 
-    getPersonList() {
-        let personList = JSON.parse(localStorage.getItem("persons"));
-        return (personList)? personList: {}
+    getPersonList(render) {
+        const personList = JSON.parse(localStorage.getItem("persons"));
+        if (personList){
+            render(personList)
+        } else {
+            render({})
+        }
     }
 
     createPerson(person){
-        let personList = this.getPersonList();
-        personList[person.id] = person;
-        localStorage.setItem("persons", JSON.stringify(personList))
+        const personList = JSON.parse(localStorage.getItem("persons"));
+        if (personList) {
+            personList[person.id] = person;
+            localStorage.setItem("persons", JSON.stringify(personList))
+        }
     }
 
-    getPerson(id){
-        let personList = this.getPersonList();
-        return personList[id];
+    getPerson(id, render){
+        const personList = JSON.parse(localStorage.getItem("persons"));
+        if (personList) {
+            render(personList[id]);
+        }
     }
 
     updatePerson(person){
-        let personList = this.getPersonList();
-        personList[person.id] = person;
-        localStorage.setItem("persons", JSON.stringify(personList));
+        const personList = JSON.parse(localStorage.getItem("persons"));
+        if(personList) {
+            personList[person.id] = person;
+            localStorage.setItem("persons", JSON.stringify(personList));
+        }
     }
 
     deletePerson(id){
-        let personList = this.getPersonList();
-        delete personList[id];
-        localStorage.setItem("persons", JSON.stringify(personList));
+        const personList = JSON.parse(localStorage.getItem("persons"));
+        if (personList) {
+            delete personList[id];
+            localStorage.setItem("persons", JSON.stringify(personList));
+        }
     }
 }
 
@@ -100,7 +119,6 @@ class PersonDAOServer{
             return PersonDAOServer.instance
         } else {
             PersonDAOServer.instance = this;
-            this.personList = {};
         }
     }
 
@@ -109,14 +127,14 @@ class PersonDAOServer{
         return true;
     }
 
-    static getAllRows(callback){
+    getPersonList(render) {
         const persons = {};
 
-        db.transaction(function (tx) {
+        db.transaction((tx) => {
             tx.executeSql(
                 "SELECT * FROM persons",
                 [],
-                function (tx, result) {
+                (tx, result) => {
                     for (let i = 0; i < result.rows.length; i++){
                         persons[result.rows.item(i)['id']] = {
                             "id": result.rows.item(i)['id'],
@@ -125,24 +143,15 @@ class PersonDAOServer{
                             "age": result.rows.item(i)["age"]
                         }
                     }
-
-                    callback(persons);
+                    render(persons);
                 },
                 PersonDAOServer.errorHandler
             )
         });
     }
 
-    getPersonList() {
-        PersonDAOServer.getAllRows(function (persons) {
-            console.log(persons);
-            personListWebSQL = persons;
-        });
-        return personListWebSQL;
-    }
-
     createPerson(person){
-        db.transaction( function (tx) {
+        db.transaction((tx) => {
             tx.executeSql(
                 "INSERT INTO persons (id, firstName, lastName, age) VALUES (?, ?, ?, ?);",
                 [person.id, person.firstName, person.lastName, person.age],
@@ -151,8 +160,27 @@ class PersonDAOServer{
         })
     }
 
-    getPerson(id){
+    getPerson(id, render){
+        const person = {};
 
+        db.transaction((tx) => {
+            tx.executeSql(
+                "SELECT * FROM persons WHERE id=?",
+                [id],
+                (tx, result) => {
+                    if(result.rows.length === 1) {
+                        person.firstName = result.rows.item(0)["firstName"];
+                        person.lastName = result.rows.item(0)["lastName"];
+                        person.age = result.rows.item(0)["age"];
+                        console.log(person);
+                        render(person);
+                    } else {
+                        raiseError("No such person")
+                    }
+                },
+                PersonDAOServer.errorHandler
+            )
+        });
     }
 
     updatePerson(person){
@@ -179,7 +207,27 @@ class PersonDAOIndex{
     }
 
     createPerson(person){
-
+        indexDB.persons.add({
+            id: person.id,
+            person: JSON.stringify(person)
+        //     shoeSize: 8}).then (function(){
+        //     //
+        //     // Then when data is stored, read from it
+        //     //
+        //     return db.friends.get('Nicolas');
+        // }).then(function (friend) {
+        //     //
+        //     // Display the result
+        //     //
+        //     alert ("Nicolas has shoe size " + friend.shoeSize);
+        // }).catch(function(error) {
+        //     //
+        //     // Finally don't forget to catch any error
+        //     // that could have happened anywhere in the
+        //     // code blocks above.
+        //     //
+        //     alert ("Ooops: " + error);
+        });
     }
 
     getPerson(id){

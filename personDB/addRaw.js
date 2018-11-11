@@ -100,29 +100,28 @@ function createPerson() {
             raiseError("Include empty field!");
         }
 
-        renderPersonList(personDAO.getPersonList());
+        personDAO.getPersonList((persons)=>{
+            renderPersonList(persons);
+        })
     } else {
         raiseError("Storage is not chosen")
     }
 }
 
-function getPersonByEnteredId() {
-    let id = idFld.value;
-    let person = personDAO.getPerson(id);
-    return (person)? person:
-        (id)? raiseError("No such person"):
-            raiseError("Id field is invalid");
-}
-
 function readPerson() {
-    if (personDAO) {
-        let person = getPersonByEnteredId();
+    const id = idFld.value;
+    if (!id) raiseError("Id field is invalid");
 
-        if (person) {
-            firstNameFld.value = person.firstName;
-            lastNameFld.value = person.lastName;
-            ageFld.value = person.age;
-        }
+    if (personDAO) {
+        personDAO.getPerson(id, (person) => {
+            if (person) {
+                firstNameFld.value = person.firstName;
+                lastNameFld.value = person.lastName;
+                ageFld.value = person.age;
+            } else {
+                raiseError("No such person")
+            }
+        })
     } else {
         raiseError("Storage is not chosen")
     }
@@ -130,35 +129,37 @@ function readPerson() {
 
 function updatePerson(){
     if (personDAO) {
-        let person = getPersonByEnteredId();
 
-        if (person) {
-            person.firstName = firstNameFld.value;
-            person.lastName = lastNameFld.value;
-            person.age = ageFld.value;
+    const person = {
+        id: idFld.value,
+        firstName: firstNameFld.value,
+        lastName: lastNameFld.value,
+        age: ageFld.value
+    };
 
-            if (!containsUndefined(person)) {
-                personDAO.updatePerson(person);
-            } else {
-                raiseError("Include empty field!");
-            }
+    if (!containsUndefined(person)) {
+        personDAO.updatePerson(person);
+    } else {
+        raiseError("Include empty field!");
+    }
 
-            renderPersonList(personDAO.getPersonList());
-        }
+    personDAO.getPersonList((persons)=>{
+        renderPersonList(persons);
+    });
+
     } else {
         raiseError("Storage is not chosen")
     }
 }
 
 function deletePerson() {
+    const id = idFld.value;
+
     if (personDAO) {
-        let person = getPersonByEnteredId();
-
-        if (person) {
-            personDAO.deletePerson(person.id);
-
-            renderPersonList(personDAO.getPersonList());
-        }
+        personDAO.deletePerson(id);
+        personDAO.getPersonList((persons)=>{
+            renderPersonList(persons);
+        })
     } else {
         raiseError("Storage is not chosen")
     }
