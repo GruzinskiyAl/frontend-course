@@ -172,7 +172,6 @@ class PersonDAOServer{
                         person.firstName = result.rows.item(0)["firstName"];
                         person.lastName = result.rows.item(0)["lastName"];
                         person.age = result.rows.item(0)["age"];
-                        console.log(person);
                         render(person);
                     } else {
                         raiseError("No such person")
@@ -184,11 +183,23 @@ class PersonDAOServer{
     }
 
     updatePerson(person){
-
+        db.transaction((tx) => {
+            tx.executeSql(
+                "UPDATE persons SET firstName=?, lastName=?, age=? WHERE id=?;",
+                [person.firstName, person.lastName, person.age, person.id,],
+                null,
+                PersonDAOServer.errorHandler)
+        })
     }
 
     deletePerson(id){
-
+        db.transaction((tx) => {
+            tx.executeSql(
+                "DELETE FROM persons WHERE id=?;",
+                [id],
+                null,
+                PersonDAOServer.errorHandler)
+        })
     }
 }
 
@@ -202,43 +213,40 @@ class PersonDAOIndex{
         }
     }
 
-    getPersonList() {
-
+    getPersonList(render) {
+        indexDB.persons.toArray().then(persons => {
+            let personsObj = {};
+            persons.forEach((person) => {
+                personsObj[person.id] =JSON.parse(person.person);
+            });
+            render(personsObj);
+        })
     }
 
     createPerson(person){
-        indexDB.persons.add({
-            id: person.id,
-            person: JSON.stringify(person)
-        //     shoeSize: 8}).then (function(){
-        //     //
-        //     // Then when data is stored, read from it
-        //     //
-        //     return db.friends.get('Nicolas');
-        // }).then(function (friend) {
-        //     //
-        //     // Display the result
-        //     //
-        //     alert ("Nicolas has shoe size " + friend.shoeSize);
-        // }).catch(function(error) {
-        //     //
-        //     // Finally don't forget to catch any error
-        //     // that could have happened anywhere in the
-        //     // code blocks above.
-        //     //
-        //     alert ("Ooops: " + error);
+        return indexDB.persons.add({id: person.id, person: JSON.stringify({id: person.id,
+                                                       firstName: person.firstName,
+                                                       lastName: person.lastName,
+                                                       age: person.age})
         });
-    }
+    };
 
-    getPerson(id){
-
+    getPerson(id, render){
+        indexDB.persons.where("id").equals(id).toArray().then(persons =>{
+            if(persons.length === 1){
+                const person = JSON.parse(persons[0].person);
+                render(person)
+            } else {
+                raiseError("No such person")
+            }
+        })
     }
 
     updatePerson(person){
-
+        indexDB.persons.put({id: person.id, person: JSON.stringify(person)});
     }
 
     deletePerson(id){
-
+        indexDB.persons.where("id").equals(id).delete();
     }
 }
