@@ -81,11 +81,12 @@ class PersonDAOLocal{
     }
 
     createPerson(person){
-        const personList = JSON.parse(localStorage.getItem("persons"));
-        if (personList) {
-            personList[person.id] = person;
-            localStorage.setItem("persons", JSON.stringify(personList))
+        let personList = JSON.parse(localStorage.getItem("persons"));
+        if (!personList) {
+            personList = {};
         }
+        personList[person.id] = person;
+        localStorage.setItem("persons", JSON.stringify(personList))
     }
 
     getPerson(id, render){
