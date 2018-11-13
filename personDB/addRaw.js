@@ -1,199 +1,168 @@
-window.onload = function () {
+onload = function () {
     init();
 };
 
 function init() {
-    rowFunc();
+    window.idFld = document.getElementById("inputId");
+    window.firstNameFld = document.getElementById("inputFirstName");
+    window.lastNameFld = document.getElementById("inputLastName");
+    window.ageFld = document.getElementById("inputAge");
+
+    window.errorField = document.getElementById("error");
+
+    addEventListeners();
 }
 
-//достаем все записи с БД
-function rowFunc() {
-    //const items = createRows();
-    const items = Storage.readAllItems();
-    if (items.length !== 0) {
-        for (let i = 0; i < items.length; i ++){
-            let tbl = document.getElementById('tbl');
-            this.tr = document.createElement('tr');
-            this.tr.id = 'tr' + (items[i].id);
-            this.idTd = document.createElement('td');
-            this.idTd.id = 'id-td' + (i+1);
-            this.fNameTd = document.createElement('td');
-            this.fNameTd.id = 'fname-td' + (i+1);
-            this.lNameTd = document.createElement('td');
-            this.lNameTd.id = 'lname-td' + (i+1);
-            this.ageTd = document.createElement('td');
-            this.ageTd.id = 'age-td' + (i+1);
-            this.textId = document.createTextNode(items[i].id);
-            this.textFName = document.createTextNode(items[i].fname);
-            this.texttLName = document.createTextNode(items[i].lname);
-            this.textAge = document.createTextNode(items[i].age);
-            this.idTd.appendChild(this.textId);
-            this.fNameTd.appendChild(this.textFName);
-            this.lNameTd.appendChild(this.texttLName);
-            this.ageTd.appendChild(this.textAge);
-            this.tr.appendChild(this.idTd);
-            this.tr.appendChild(this.fNameTd);
-            this.tr.appendChild(this.lNameTd);
-            this.tr.appendChild(this.ageTd);
-            tbl.appendChild(this.tr);
-        }
+function addEventListeners() {
+    let createBtn = document.getElementById("createBtn");
+    let readBtn = document.getElementById("readBtn");
+    let updateBtn = document.getElementById("updateBtn");
+    let deleteBtn = document.getElementById("deleteBtn");
+
+    let indexBtn = document.getElementById("indexBtn");
+    let webBtn = document.getElementById("webBtn");
+    let lsBtn = document.getElementById("lsBtn");
+    let wsBtn = document.getElementById("wsBtn");
+
+    createBtn.onclick = createPerson;
+    readBtn.onclick = readPerson;
+    updateBtn.onclick = updatePerson;
+    deleteBtn.onclick = deletePerson;
+
+    indexBtn.onclick = setIndexStorage;
+    webBtn.onclick = setServerStorage;
+    lsBtn.onclick = setLocalStorage;
+    wsBtn.onclick = setWindowStorage;
+}
+
+function renderPersonList(personListObj) {
+    const tableBody = document.getElementById("tableBody");
+
+    while (tableBody.firstChild){
+        tableBody.removeChild(tableBody.firstChild)
+    }
+
+    for(let keyId in personListObj) {
+        let raw = document.createElement("DIV");
+        let id = document.createElement("DIV");
+        let firstName = document.createElement("DIV");
+        let lastName = document.createElement("DIV");
+        let age = document.createElement("DIV");
+
+        id.innerText = personListObj[keyId]["id"];
+        firstName.innerText = personListObj[keyId]["firstName"];
+        lastName.innerText = personListObj[keyId]["lastName"];
+        age.innerText = personListObj[keyId]["age"];
+
+        raw.className = "table-block__raw";
+        id.className = "table-block__raw-id";
+        firstName.className = "table-block__raw-first-name";
+        lastName.className = "table-block__raw-last-name";
+        age.className ="table-block__raw-age";
+
+        raw.appendChild(id);
+        raw.appendChild(firstName);
+        raw.appendChild(lastName);
+        raw.appendChild(age);
+
+        tableBody.appendChild(raw);
     }
 }
 
-//добавление в БД
-function createBtn() {
-    var item = createRow();
-
-    if (inputId !== '' && inputFName !== '' && inputLName !== '' && inputAge !== ''){
-        //сохранение в БД
-        dbPromise.then(function(db) {
-            var tx = db.transaction('store', 'readwrite');
-            var store = tx.objectStore('store');
-
-            store.add(item);
-
-            return tx.complete;
-        }).then(function() {
-            console.log('added item to the store os!');
-        });
-    }else{
-        document.getElementById('warn').innerHTML = 'Заполните все поля';
-        document.getElementById('warn').style.color = 'red';
+function containsUndefined(obj) {
+    for(let key in obj) {
+        if (!obj[key]) return true;
     }
-
+    return false
 }
 
-function readBtn() {
-    let rInput = document.getElementById('inputId').value;
-    dbPromise.then(function(db) {
-        var tx = db.transaction('store', 'readonly');
-        var store = tx.objectStore('store');
-        return store.get(rInput);
-    }).then(function(val) {
-        alert('id: ' + val.id + ' First name: ' + val.fname + ' Last name: ' + val.lname + ' Age: ' + val.age);
-    });
+function raiseError(text) {
+    errorField.innerText = text;
 }
 
-function updateBtn() {
-    const inputId = document.getElementById("inputId").value;
-    const inputFName = document.getElementById('inputFName').value;
-    const inputLName = document.getElementById('inputLName').value;
-    const inputAge = document.getElementById('inputAge').value;
-    let parent = document.getElementById('tbl');
-    let trChild = document.getElementById('tr' + inputId);
-    dbPromise.then(function(db) {
-        var tx = db.transaction('store', 'readwrite');
-        var store = tx.objectStore('store');
-        var item = {
-            id: inputId,
-            fname: inputFName,
-            lname: inputLName,
-            age: inputAge
+function createPerson() {
+    if (personDAO) {
+        const id = idFld.value;
+        const firstName = firstNameFld.value;
+        const lastName = lastNameFld.value;
+        const age = ageFld.value;
+
+        const person = {
+            id,
+            firstName,
+            lastName,
+            age
         };
-        store.put(item);
 
-        //удаление сразу же с экрана
-        parent.removeChild(trChild);
-        //добавление сразу же на экран
-        let tbl = document.getElementById('tbl');
-        this.tr = document.createElement('tr');
-        this.tr.id = 'tr' + inputId;
-        this.idTd = document.createElement('td');
-        this.idTd.id = 'id-td' + inputId;
-        this.fNameTd = document.createElement('td');
-        this.fNameTd.id = 'fname-td' + inputId;
-        this.lNameTd = document.createElement('td');
-        this.lNameTd.id = 'lname-td' + inputId;
-        this.ageTd = document.createElement('td');
-        this.ageTd.id = 'age-td' + inputId;
-        this.textId = document.createTextNode(inputId);
-        this.textFName = document.createTextNode(inputFName);
-        this.texttLName = document.createTextNode(inputLName);
-        this.textAge = document.createTextNode(inputAge);
-        this.idTd.appendChild(this.textId);
-        this.fNameTd.appendChild(this.textFName);
-        this.lNameTd.appendChild(this.texttLName);
-        this.ageTd.appendChild(this.textAge);
-        this.tr.appendChild(this.idTd);
-        this.tr.appendChild(this.fNameTd);
-        this.tr.appendChild(this.lNameTd);
-        this.tr.appendChild(this.ageTd);
-        tbl.appendChild(this.tr);
+        if (!containsUndefined(person)) {
+            personDAO.createPerson(person);
+        } else {
+            raiseError("Include empty field!");
+        }
 
-        return tx.complete;
-    }).then(function() {
-        console.log('item updated!');
-    });
+        personDAO.getPersonList((persons)=>{
+            renderPersonList(persons);
+        })
+    } else {
+        raiseError("Storage is not chosen")
+    }
 }
 
-function deleteBtn() {
-    let dInput = document.getElementById('inputId').value;
-    let parent = document.getElementById('tbl');
-    let trChild = document.getElementById('tr' + dInput);
-    dbPromise.then(function(db) {
-        var tx = db.transaction('store', 'readonly');
-        var store = tx.objectStore('store');
-        return store.get(dInput);
-    }).then(function(val) {
-        dbPromise.then(function(db) {
-            var tx = db.transaction('store', 'readwrite');
-            var store = tx.objectStore('store');
-            store.delete(val.id);
-            parent.removeChild(trChild);
-            return tx.complete;
-        }).then(function() {
-            console.log('Item deleted');
-        });
-    });
+function readPerson() {
+    const id = idFld.value;
+    if (!id) raiseError("Id field is invalid");
+
+    if (personDAO) {
+        personDAO.getPerson(id, (person) => {
+            if (person) {
+                firstNameFld.value = person.firstName;
+                lastNameFld.value = person.lastName;
+                ageFld.value = person.age;
+            } else {
+                raiseError("No such person")
+            }
+        })
+    } else {
+        raiseError("Storage is not chosen")
+    }
 }
 
-function createRows(items) {
-    let itemsRet = null
-    dbPromise.then(function(db) {
-        var tx = db.transaction('store', 'readonly');
-        var store = tx.objectStore('store');
-        return store.getAll();
-    }).then(function(items) {
-        itemsRet = items;
-    });
-    return items;
-}
-function createRow() {
-    const inputId = document.getElementById("inputId").value;
-    const inputFName = document.getElementById('inputFName').value;
-    const inputLName = document.getElementById('inputLName').value;
-    const inputAge = document.getElementById('inputAge').value;
-// вывод сразу же на экран
-    const item = {
-        id: inputId,
-        fname: inputFName,
-        lname: inputLName,
-        age: inputAge
+function updatePerson(){
+    if (personDAO) {
+
+    const person = {
+        id: idFld.value,
+        firstName: firstNameFld.value,
+        lastName: lastNameFld.value,
+        age: ageFld.value
     };
 
-    const tbl = document.getElementById('tbl');
-    this.tr = document.createElement('tr');
-    this.tr.id = 'tr' + inputId;
-    this.idTd = document.createElement('td');
-    this.idTd.id = 'id-td' + inputId;
-    this.fNameTd = document.createElement('td');
-    this.fNameTd.id = 'fname-td' + inputId;
-    this.lNameTd = document.createElement('td');
-    this.lNameTd.id = 'lname-td' + inputId;
-    this.ageTd = document.createElement('td');
-    this.ageTd.id = 'age-td' + inputId;
-    this.textId = document.createTextNode(inputId);
-    this.textFName = document.createTextNode(inputFName);
-    this.texttLName = document.createTextNode(inputLName);
-    this.textAge = document.createTextNode(inputAge);
-    this.idTd.appendChild(this.textId);
-    this.fNameTd.appendChild(this.textFName);
-    this.lNameTd.appendChild(this.texttLName);
-    this.ageTd.appendChild(this.textAge);
-    this.tr.appendChild(this.idTd);
-    this.tr.appendChild(this.fNameTd);
-    this.tr.appendChild(this.lNameTd);
-    this.tr.appendChild(this.ageTd);
-    tbl.appendChild(this.tr);
-    return item
+    if (!containsUndefined(person)) {
+        personDAO.updatePerson(person);
+    } else {
+        raiseError("Include empty field!");
+    }
+
+    personDAO.getPersonList((persons)=>{
+        renderPersonList(persons);
+    });
+
+    } else {
+        raiseError("Storage is not chosen")
+    }
 }
+
+function deletePerson() {
+    const id = idFld.value;
+
+    if (personDAO) {
+        personDAO.deletePerson(id);
+        personDAO.getPersonList((persons)=>{
+            renderPersonList(persons);
+        })
+    } else {
+        raiseError("Storage is not chosen")
+    }
+}
+
+

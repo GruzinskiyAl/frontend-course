@@ -2,43 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Persons</title>
     <link rel="stylesheet" href="style.css">
-    <!--<script src="./node_modules/idb/lib/idb.js"></script>-->
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
     <script src="dbConnection.js"></script>
-    <script src="addRow.js"></script>
+    <script src="personDAO.js"></script>
+    <script src="addRaw.js"></script>
 </head>
 <body>
-<div id="container">
-    <div id="Table">
-        <table id="tbl">
-            <tr id="headTr">
-                <th class="th-head id-th">id</th>
-                <th class="th-head fname-th">First name</th>
-                <th class="th-head lname-th">Last name</th>
-                <th class="th-head age-th">Age</th>
-            </tr>
-        </table>
-    </div>
+<div class="main-block">
     <div class="inputs-block">
-        <label for="inputId">Id</label><input type="number" id="inputId">
-        <label for="inputFName">First Name</label><input type="text" id="inputFName">
-        <label for="inputLName">Last Name</label><input type="text" id="inputLName">
-        <label for="inputAge">Age</label><input type="text" id="inputAge">
+        <label for="inputId">Id<input class="inputs-block__item" type="number" id="inputId"></label>
+        <label for="inputFirstName">First Name<input class="inputs-block__item" type="text" id="inputFirstName"></label>
+        <label for="inputLastName">Last Name<input class="inputs-block__item" type="text" id="inputLastName"></label>
+        <label for="inputAge">Age<input class="inputs-block__item" type="number" id="inputAge"></label>
     </div>
-    <div class="btn-block">
-        <input type="button" id="createBtn" value="Create" onclick="createBtn()">
-        <input type="button" id="readBtn" value="Read" onclick="readBtn()">
-        <input type="button" id="updateBtn" value="Update" onclick="updateBtn()">
-        <input type="button" id="deleteBtn" value="Delete" onclick="deleteBtn()">
+    <div class="error-block">
+        <p id="error"></p>
     </div>
-    <div class="btn-dao">
-        <input type="button" value="setWindow" onclick="setWindowStorage()">
-        <input type="button" value="setLocalSt" onclick="setLocalStorage()">
-        <input type="button" value="setIndexedDB" onclick="setIndexedDBStorage()">
-        <input type="button" value="setServer" onclick="setServerStorage()">
+    <div class="table-block">
+        <div class="table-block__header">
+            <div class="table-block__header-id">ID</div>
+            <div class="table-block__header-first-name">FIRST NAME</div>
+            <div class="table-block__header-last-name">LAST NAME</div>
+            <div class="table-block__header-age">AGE</div>
+        </div>
+        <div class="table-block__body" id="tableBody">
+        </div>
     </div>
-    <p id="warn"></p>
+    <div class="crud-block">
+        <button class="control-btn" id="createBtn">Create</button>
+        <button class="control-btn" id="readBtn">Read</button>
+        <button class="control-btn" id="updateBtn">Update</button>
+        <button class="control-btn" id="deleteBtn">Delete</button>
+    </div>
+    <div class="storage-block">
+        <button class="storage-btn" id="indexBtn">IndexDB</button>
+        <button class="storage-btn" id="webBtn">Web SQL</button>
+        <button class="storage-btn" id="lsBtn">Local Storage</button>
+        <button class="storage-btn" id="wsBtn">Window Storage</button>
+    </div>
 </div>
 </body>
 </html>
