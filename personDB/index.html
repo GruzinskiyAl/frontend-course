@@ -2,9 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>Title</title>
+    <link rel="stylesheet" href="style.css">
+    <!--<script src="./node_modules/idb/lib/idb.js"></script>-->
+    <script src="dbConnection.js"></script>
+    <script src="addRow.js"></script>
 </head>
 <body>
-$END$
+<div id="container">
+    <div id="Table">
+        <table id="tbl">
+            <tr id="headTr">
+                <th class="th-head id-th">id</th>
+                <th class="th-head fname-th">First name</th>
+                <th class="th-head lname-th">Last name</th>
+                <th class="th-head age-th">Age</th>
+            </tr>
+        </table>
+    </div>
+    <div class="inputs-block">
+        <label for="inputId">Id</label><input type="number" id="inputId">
+        <label for="inputFName">First Name</label><input type="text" id="inputFName">
+        <label for="inputLName">Last Name</label><input type="text" id="inputLName">
+        <label for="inputAge">Age</label><input type="text" id="inputAge">
+    </div>
+    <div class="btn-block">
+        <input type="button" id="createBtn" value="Create" onclick="createBtn()">
+        <input type="button" id="readBtn" value="Read" onclick="readBtn()">
+        <input type="button" id="updateBtn" value="Update" onclick="updateBtn()">
+        <input type="button" id="deleteBtn" value="Delete" onclick="deleteBtn()">
+    </div>
+    <div class="btn-dao">
+        <input type="button" value="setWindow" onclick="setWindowStorage()">
+        <input type="button" value="setLocalSt" onclick="setLocalStorage()">
+        <input type="button" value="setIndexedDB" onclick="setIndexedDBStorage()">
+        <input type="button" value="setServer" onclick="setServerStorage()">
+    </div>
+    <p id="warn"></p>
+</div>
 </body>
 </html>
