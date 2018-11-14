@@ -7,7 +7,11 @@ class TabManager{
         this.layerAggregator = document.getElementById("layerAggregator");
 
         this.tabArray = [];
-        this.tabCount = this.tabArray.length;
+        this.sheetSize = {
+            width: this.paintPanel.clientWidth + "px",
+            height: this.paintPanel.clientHeight + "px",
+        };
+
         this.currentSettings = {
             color: "",
             size: "",
@@ -28,46 +32,75 @@ class TabManager{
         }
     }
 
-    acivateTab(tab){
+    activateLastTab(){
+        const lastTab = this.tabArray[this.tabArray.length - 1];
+        if(lastTab) this.activateTab(lastTab);
+    }
 
+    setDeleteTabAction(tab){
+        const deleteButton = tab.getDeleteButton();
+        deleteButton.onclick = (event) => {
+            const i = this.tabArray.indexOf(tab);
+            this.tabArray.splice(i, 1);
+
+            this.tabAggregator.removeChild(tab.tabButton);
+            this.clearPaintPanel();
+            this.clearLayerAggregator();
+
+            this.activateLastTab();
+            event.stopImmediatePropagation();
+        }
+    }
+
+    setActivateTabAction(tab){
+        const tabButton = tab.tabButton;
+        tabButton.onclick = (event) => {
+            this.activateTab(tab);
+            event.stopImmediatePropagation();
+        }
+    }
+
+    activateTabButton(tab){
+        this.tabArray.forEach((tab) => {
+            tab.deactivateButton();
+        });
+        tab.activateButton();
+    }
+
+    activateTab(tab){
+        this.clearPaintPanel();
+        this.clearLayerAggregator();
+
+        // add sheet to paintPanel
+        this.paintPanel.appendChild(tab.wrapperBlock);
+
+        // show layers of tab
+        tab.showLayers(this.layerAggregator);
+
+        this.activateTabButton(tab);
     }
 
     createNewTab(){
+        this.tabCount = this.tabArray.length;
+
         const newTab = new PaintTab({color: this.currentSettings.color,
                                 brushSize: this.currentSettings.size,
                                 isBrushStatus: this.currentSettings.isBrushStatus,
                                 figure: this.currentSettings.figure,
-                                numId: this.tabCount+1});
+                                numId: this.tabCount+1,
+                                sizes: this.sheetSize});
 
         this.tabArray.push(newTab);
+        // add action listeners to tabButton
+        this.setActivateTabAction(newTab);
+        this.setDeleteTabAction(newTab);
+
+        this.tabAggregator.appendChild(newTab.tabButton);
+        this.activateTab(newTab);
     }
 
     setCurrentSettings(settings){
         this.currentSettings = settings;
     }
 
-    unActivateTab(tab){
-        tab.unActivateTab();
-    }
-
-    activateTab(tab){
-        this.tabArray.forEach((tab) => {
-            this.unActivateTab(tab);
-        });
-        tab.activateTab();
-    }
-
-    addTab(){
-        this.tabArray.forEach((tab) => {
-            this.unActivateTab(tab);
-        });
-        let currentCount = this.tabArray.length;
-        let tab = new PaintTab({color: this.currentSettings.color,
-                            brushSize: this.currentSettings.size,
-                            isBrushStatus: this.currentSettings.isBrushStatus,
-                            figure: this.currentSettings.figure,
-                            numId: currentCount+1,
-                            parent: this.paintPanel});
-        this.tabArray.push(tab);
-    }
 }

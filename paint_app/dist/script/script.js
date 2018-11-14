@@ -13,7 +13,7 @@ function init() {
 }
 
 function addEventListeners() {
-    addTabBtn.onclick = addTab();
+    addTabBtn.onclick = addTab;
 
     paintPanel.onmousemove = mouseMoveHandler;
     paintPanel.onmousedown = startPainting;

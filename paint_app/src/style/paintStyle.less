@@ -104,7 +104,18 @@
       border: none;
 
     };
+  };
+
+  &__closer{
+    &_default{
+      cursor: pointer;
+      
+      &:hover{
+        background-color: #eee;
+      }
+    }
   }
+
 };
 
 .create-tab-btn{
@@ -169,6 +180,7 @@
 .paint-panel{
   &_default{
     //border: @border;
+    width: 100%;
     height: 100%;
   }
 };
@@ -176,12 +188,9 @@
 .canvas-wrapper{
   &_default{
     height: 100%;
-    display: none;
+    display: block
   };
 
-  &_active{
-    display: block;
-  };
 
   &__main-canvas{
     &_default{

@@ -3,43 +3,63 @@
 const brashInput = document.getElementById('isBrushStatus');
 
 class PaintTab {
-    constructor({color, brushSize, isBrushStatus, figure, numId, parent}) {
-        this.tabActiveClass = "tab_active";
-        this.paintTabActiveClass = "canvas-wrapper_active";
-
-        this.tabName = 'Tab ' + numId;
+    constructor({color, brushSize, isBrushStatus, figure, numId, sizes}) {
         this.brushColor = color;
         this.figure = figure;
         this.brushSize = brushSize;
         this.isBrushStatus = isBrushStatus;
         this.paintingStatus = true;
 
-        this.wrapperBlock = PaintTab.createWrapper(parent);
 
-        const sizes = {
-            width: parseInt(this.wrapperBlock.style.width),
-            height: parseInt(this.wrapperBlock.style.height)
-        };
+        this.createTabButton('Tab ' + numId);
+        this.createLayerList();
+        this.createWrapperBlock(sizes);
 
-        this.mainCanvas = new Canvas(sizes);
 
-        this.wrapperBlock.appendChild(this.mainCanvas.element);
-
-        this.tab = PaintTab.createTab(this.tabName);
-        document.getElementById("tabAggregator").appendChild(this.tab);
-
-        this.setElementClasses();
-
-        parent.appendChild(this.wrapperBlock);
-
-        this.tab.onclick = this.hideTab.bind(this);
-        brashInput.onchange = this.changeBrushStatusHandler.bind(this);
-        this.wrapperBlock.onmousemove = this.mouseMoveHandler.bind(this);
-        this.wrapperBlock.onmousedown = this.startPainting.bind(this);
-        this.wrapperBlock.onmouseup = this.stopPainting.bind(this);
-        this.wrapperBlock.onmouseleave = this.stopPainting.bind(this);
-        this.wrapperBlock.onclick = this.mouseClickHandler.bind(this);
+        // brashInput.onchange = this.changeBrushStatusHandler.bind(this);
+        // this.wrapperBlock.onmousemove = this.mouseMoveHandler.bind(this);
+        // this.wrapperBlock.onmousedown = this.startPainting.bind(this);
+        // this.wrapperBlock.onmouseup = this.stopPainting.bind(this);
+        // this.wrapperBlock.onmouseleave = this.stopPainting.bind(this);
+        // this.wrapperBlock.onclick = this.mouseClickHandler.bind(this);
     };
+
+    createTabButton(name){
+        const tabButton = new TabButton(name);
+        this.tabButton = tabButton.getElement();
+        this.deleteButton = tabButton.getDeleteButton();
+    }
+
+    createLayerList(){
+        this.layerList = new LayerList();
+    }
+
+    createWrapperBlock(sizes){
+        let element = document.createElement("DIV");
+        element.style.width = sizes.width;
+        element.style.height = sizes.height;
+        element.className = "canvas-wrapper canvas-wrapper_default";
+        this.wrapperBlock = element
+    }
+
+    showLayers(layerWrapper){
+        this.layerList.forEach((layer) => {
+            layerWrapper.appendChild(layer)
+        })
+    }
+
+    activateButton(){
+        this.tabButton.activate();
+    }
+
+    deactivateButton(){
+        this.tabButton.deactivate();
+    }
+
+    getDeleteButton(){
+        return this.deleteButton;
+    }
+
 
     unActivateTab(){
         this.wrapperBlock.classList.remove(this.paintTabActiveClass);
@@ -67,17 +87,6 @@ class PaintTab {
         this.figure = figure;
     }
 
-    setElementClasses() {
-        const elementClasses = {
-            "wrapperBlock": "canvas-wrapper canvas-wrapper_default",
-            "mainCanvas": "canvas-wrapper__main-canvas canvas-wrapper__main-canvas_default",
-            "tab": "tab tab_default"
-        };
-
-        this.wrapperBlock.className = elementClasses.wrapperBlock;
-        this.mainCanvas.element.className = elementClasses.mainCanvas;
-        this.tab.className = elementClasses.tab;
-    }
 
     changeBrushStatusHandler(event) {
         this.isBrushStatus = event.target.checked;
@@ -121,36 +130,11 @@ class PaintTab {
     }
 
     paintWithFigure(point, size, color = "#000", figure = "Hexagon") {
-        (figure === "Circle")? this.mainCanvas.paintPoint(point, size, color):
+        (figure === "Circle") ? this.mainCanvas.paintPoint(point, size, color):
             (figure === "Square")? this.mainCanvas.paintSquare(point, size, color):
                 this.mainCanvas.paintHexagon(point, size, color);
     }
 
-    static createWrapper(parent) {
-        let element = document.createElement("DIV");
-        element.style.width = parseInt(parent.clientWidth) + "px";
-        element.style.height = parseInt(parent.clientHeight) + "px";
-        return element;
-    };
-
-
-    static createTab(tabName) {
-        let element = document.createElement("DIV");
-        let button = document.createElement("INPUT");
-        let span = document.createElement("SPAN");
-        span.appendChild(document.createTextNode("\u00D7"));
-        button.type = "button";
-        button.value = tabName;
-        button.classList.add("tab__btn");
-        button.classList.add("tab__btn_default");
-        span.classList.add("tab__closer");
-        span.classList.add("tab__closer_default");
-        element.classList.add("tab");
-        element.classList.add("tab_default");
-        element.appendChild(button);
-        element.appendChild(span);
-        return element;
-    }
 
     hideTab() {
         this.wrapperBlock.style.display = "none";
@@ -204,6 +188,51 @@ class Canvas{
     }
 }
 
+class LayerList{
+    constructor(){
+        this.array = [];
+    }
+
+    createLayer(){
+        const canvas = new Canvas()
+    }
+}
+
+class TabButton{
+    constructor(name){
+        this.element = document.createElement("DIV");
+        const button = document.createElement("INPUT");
+        const span = document.createElement("SPAN");
+        span.appendChild(document.createTextNode("\u00D7"));
+        button.type = "button";
+        button.value = name;
+        button.classList.add("tab__btn");
+        button.classList.add("tab__btn_default");
+        span.classList.add("tab__closer");
+        span.classList.add("tab__closer_default");
+        this.element.classList.add("tab");
+        this.element.classList.add("tab_default");
+        this.element.appendChild(button);
+        this.element.appendChild(span);
+    }
+
+    getElement(){
+        return this.element
+    }
+
+    activate(){
+        this.element.classList.add("tab_active");
+    }
+
+    deactivate(){
+        this.element.classList.remove("tab_active");
+    }
+
+    getDeleteButton(){
+        const btn = this.element.children[1];
+        if(btn) return btn
+    }
+}
 
 const createTabBtn = document.getElementById('addTabButton');
 const paintPanel = document.getElementById('paintPanel');
