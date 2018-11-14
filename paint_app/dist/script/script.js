@@ -5,6 +5,8 @@ window.onload = function() {
 function init() {
     window.tabManager = new TabManager();
 
+    window.addLayerBtn = document.getElementById("addLayerBtn");
+
     window.addTabBtn = document.getElementById("addTabButton");
 
     window.paintPanel = document.getElementById("paintPanel");
@@ -13,7 +15,9 @@ function init() {
 }
 
 function addEventListeners() {
-    addTabBtn.onclick = addTab();
+    addTabBtn.onclick = addTab;
+
+    addLayerBtn.onclick = addLayer;
 
     paintPanel.onmousemove = mouseMoveHandler;
     paintPanel.onmousedown = startPainting;
@@ -24,4 +28,8 @@ function addEventListeners() {
 
 function addTab() {
     tabManager.createNewTab();
+}
+
+function addLayer() {
+    tabManager.createNewTabLayer();
 }
