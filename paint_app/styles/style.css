@@ -10,10 +10,91 @@ body{
 }
 
 .control-panel {
+    display: flex;
     padding: 10px;
     margin: 10px 0;
     background-color: beige
 }
+
+
+.settings {
+    background-color: white;
+    border: 1px solid black;
+    display: block;
+    position: absolute;
+    z-index: 10;
+}
+
+
+
+
+
+
+.menu-item
+{
+    position: absolute;
+    top: 0;
+    right: -150px;
+    width: 150px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+.menu-item > li
+{
+    height: 30px;
+    background: #999999;
+}
+.menu-item > li:hover { background: #CCCCCC; }
+
+.menu-items
+{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-items > li
+{
+    position: relative;
+    /* float: left; */
+    height: 30px;
+    width: 150px;
+    background: #999999;
+}
+.menu-items > li:hover { background: #CCCCCC; }
+
+.menu-items li:hover > ul
+{
+    /* On hover, display the next level's menu */
+    display: inline;
+}
+
+
+/* Menu Link Styles */
+
+.menu-items span /* Apply to all links inside the multi-level menu */
+{
+    font: bold 14px Arial, Helvetica, sans-serif;
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 0 0 0 10px;
+    
+    /* Make the link cover the entire list item-container */
+    display: block;
+    line-height: 30px;
+}
+.menu-items span:hover { color: #000000; }
+
+
+
+
+
+
+
+
 
 .dropdown-figures {
     position: relative;

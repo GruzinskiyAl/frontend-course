@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Painting</title>
-    <script src="scripts/script.js"></script>
     <link href="styles/style.css" rel="stylesheet">
 </head>
 <body>
@@ -11,22 +10,50 @@
         <h1>Paint</h1>
     </div>
     <div class="control-panel">
-        <input type="text" id="colorField" value="black">
-    <br>
-    <button type="button" onclick="changeColor()">Enter</button>
-    <br>
-    <input type="range" id="size" min="0" max="50" step="1" oninput="changeSize()"><br>
-    <div class="dropdown-figures">
-        <button type="button">Figure</button>
-        <div class="dropdown-figures-content">
-            <div class="dropdown-figures-content-item" onclick="changeFigure('square')">Square</div>
-            <div class="dropdown-figures-content-item" onclick="changeFigure('circle')">Circle</div>
-            <div class="dropdown-figures-content-item" onclick="changeFigure('hexagon')">Hexagon</div>
+        <button onclick="() => {document.querySelector('#settingBtn')}">Settings</button>
+        
+        <div class="settings">
+            <div class="setting-closer">
+                x
+            </div>
+            <div class="menu-items-block">
+                <ul class="menu-items">
+                    <li>
+                        <span>Theme</span>
+                        <ul class="menu-item">
+                            <li>Dark</li>
+                            <li>Light</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>Lang</span>
+                        <ul class="menu-item">
+                            <li>En</li>
+                            <li>Ru</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
         </div>
-    </div>
-    <div>
-        <input type="checkbox" name="Brush" id="isBrushStatus" onclick="changeIsBrushStatus()">Brush<br>
-    </div>
+
+        <input type="text" id="colorField" value="black">
+
+        <button type="button" onclick="changeColor()">Enter</button>
+
+        <input type="range" id="size" min="0" max="50" step="1" oninput="changeSize()">
+
+        <div class="dropdown-figures">
+            <button type="button">Figure</button>
+            <div class="dropdown-figures-content">
+                <div class="dropdown-figures-content-item" onclick="changeFigure('square')">Square</div>
+                <div class="dropdown-figures-content-item" onclick="changeFigure('circle')">Circle</div>
+                <div class="dropdown-figures-content-item" onclick="changeFigure('hexagon')">Hexagon</div>
+            </div>
+        </div>
+        <div>
+            <input type="checkbox" name="Brush" id="isBrushStatus" onclick="changeIsBrushStatus()">Brush<br>
+        </div>
 
     </div>
     <div class="canvas-wrapper" id="canvasWrapper">
@@ -44,4 +71,5 @@
     </div>
 
 </body>
+    <script src="scripts/script.js"></script>
 </html>
