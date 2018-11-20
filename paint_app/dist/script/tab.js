@@ -27,7 +27,7 @@ class PaintTab {
 
     createTabButton(name){
         this.tabButtonObj = new TabButton(name);
-        this.tabButton = this.tabButtonObj.getElement();
+        this.tabButton = this.tabButtonObj.element;
         this.deleteButton = this.tabButtonObj.getDeleteButton();
     }
 
@@ -45,15 +45,16 @@ class PaintTab {
 
     addLayer(){
         const newLayer = this.layerFactory.createLayer();
-
-        newLayer.getDeleteLayerButton().onclick = () =>{
-            this.wrapperBlock.removeChild(newLayer.canvas);
-            let index = this.layerButtonList.indexOf(newLayer.layerButton);
-            this.layerButtonList.splice(index,1);
-        };
-
         this.layerButtonList.push(newLayer.layerButton);
         this.wrapperBlock.appendChild(newLayer.canvas.element)
+
+        return newLayer;
+    }
+
+    deleteLayer(layer){
+        this.wrapperBlock.removeChild(layer.canvas.element);
+        let index = this.layerButtonList.indexOf(layer.layerButton);
+        this.layerButtonList.splice(index,1);
     }
 
     activateButton(){
@@ -154,10 +155,6 @@ class TabButton{
         this.element.classList.add("tab_default");
         this.element.appendChild(button);
         this.element.appendChild(span);
-    }
-
-    getElement(){
-        return this.element
     }
 
     activate(){

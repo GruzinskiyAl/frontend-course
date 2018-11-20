@@ -7,6 +7,7 @@ class TabManager{
         this.layerAggregator = document.getElementById("layerAggregator");
 
         this.tabArray = [];
+        this.tabCount = 0;
         this.activeTab = null;
         this.sheetSize = {
             width: this.paintPanel.clientWidth + "px",
@@ -73,12 +74,12 @@ class TabManager{
         // add sheet to paintPanel
         this.paintPanel.appendChild(tab.wrapperBlock);
         // show layers of tab
-        this.renderLayers(tab);
+        this.renderLayerButtons(tab);
         this.activateTabButton(tab);
         this.activeTab = tab;
     }
 
-    renderLayers(tab){
+    renderLayerButtons(tab){
         this.clearLayerAggregator();
 
         tab.layerButtonList.forEach((button)=>{
@@ -87,13 +88,11 @@ class TabManager{
     }
 
     createNewTab(){
-        this.tabCount = this.tabArray.length;
-
         const newTab = new PaintTab({color: this.currentSettings.color,
                                 brushSize: this.currentSettings.size,
                                 isBrushStatus: this.currentSettings.isBrushStatus,
                                 figure: this.currentSettings.figure,
-                                numId: this.tabCount+1,
+                                numId: ++this.tabCount,
                                 sizes: this.sheetSize});
 
         this.tabArray.push(newTab);
@@ -106,12 +105,17 @@ class TabManager{
     }
 
     createNewTabLayer(){
-        this.activeTab.addLayer();
-        this.renderLayers(this.activeTab)
+        let newLayer = this.activeTab.addLayer();
+        this.renderLayerButtons(this.activeTab)
+
+        newLayer.deleteLayerButton.onclick = () => {
+            this.activeTab.deleteLayer(newLayer);
+            this.renderLayerButtons(this.activeTab);
+        }
     }
+
 
     setCurrentSettings(settings){
         this.currentSettings = settings;
     }
-
 }

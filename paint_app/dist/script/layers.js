@@ -7,8 +7,8 @@ class Canvas{
     }
 
     setSize(size){
-        this.element.width  = size.width;
-        this.element.height = size.height;
+        this.element.width  = parseInt(size.width);
+        this.element.height = parseInt(size.height);
     }
 
     paintPoint(point, size, color) {
@@ -75,14 +75,10 @@ class Layer{
 
     changeLayerVisible(event){
         if (event.target.checked === true){
-            this.canvas.style.display = "block"
+            this.canvas.element.style.display = "block"
         } else {
-            this.canvas.style.display = "none";
+            this.canvas.element.style.display = "none";
         }
-    }
-
-    getDeleteLayerButton(){
-        return this.deleteLayerButton;
     }
 }
 
