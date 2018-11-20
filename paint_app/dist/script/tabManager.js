@@ -82,8 +82,8 @@ class TabManager{
     renderLayerButtons(tab){
         this.clearLayerAggregator();
 
-        tab.layerButtonList.forEach((button)=>{
-            this.layerAggregator.appendChild(button)
+        tab.layerList.forEach((layer)=>{
+            this.layerAggregator.appendChild(layer.layerButton)
         })
     }
 

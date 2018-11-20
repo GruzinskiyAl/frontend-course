@@ -4,6 +4,8 @@ class Canvas{
         this.element = document.createElement("CANVAS");
         this.ctx     = this.element.getContext('2d');
         this.setSize(size);
+
+        this.element.className = "canvas-wrapper__canvas canvas-wrapper__canvas_default";
     }
 
     setSize(size){
@@ -26,9 +28,9 @@ class Canvas{
     }
 
     paintHexagon(point, size, color){
-        this.ctx.fillStyle = color;
+        this.ctx.fillStyle = "black";
 
-        let hexagonSize = size/1.5;
+        let hexagonSize = 16/1.5;
         this.ctx.beginPath();
         this.ctx.moveTo(point.left + hexagonSize * Math.cos(0), point.top + hexagonSize * Math.sin(0));
 
@@ -54,7 +56,7 @@ class Layer{
 
         checkbox.type = "checkbox";
         checkbox.checked = true;
-        checkbox.onclick = this.changeLayerVisible;
+        checkbox.onclick = this.changeLayerVisible.bind(this);
         checkbox.className = "layer__checkbox layer__checkbox_default";
 
         name.innerText = "Layer " + index;

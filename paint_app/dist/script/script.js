@@ -18,12 +18,6 @@ function addEventListeners() {
     addTabBtn.onclick = addTab;
 
     addLayerBtn.onclick = addLayer;
-
-    paintPanel.onmousemove = mouseMoveHandler;
-    paintPanel.onmousedown = startPainting;
-    paintPanel.onmouseup = stopPainting;
-    paintPanel.onmouseleave = stopPainting;
-    paintPanel.onclick = mouseClickHandler;
 }
 
 function addTab() {

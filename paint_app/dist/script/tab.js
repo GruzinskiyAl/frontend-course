@@ -10,19 +10,19 @@ class PaintTab {
         this.isBrushStatus = isBrushStatus;
         this.paintingStatus = true;
 
-        this.layerButtonList = [];
+        this.layerList = [];
 
         this.createTabButton('Tab ' + numId);
         this.createLayerFactory(sizes);
         this.createWrapperBlock(sizes);
 
 
-        // brashInput.onchange = this.changeBrushStatusHandler.bind(this);
-        // this.wrapperBlock.onmousemove = this.mouseMoveHandler.bind(this);
-        // this.wrapperBlock.onmousedown = this.startPainting.bind(this);
-        // this.wrapperBlock.onmouseup = this.stopPainting.bind(this);
-        // this.wrapperBlock.onmouseleave = this.stopPainting.bind(this);
-        // this.wrapperBlock.onclick = this.mouseClickHandler.bind(this);
+        brashInput.onchange = this.changeBrushStatusHandler.bind(this);
+        this.wrapperBlock.onmousemove = this.mouseMoveHandler.bind(this);
+        this.wrapperBlock.onmousedown = this.startPainting.bind(this);
+        this.wrapperBlock.onmouseup = this.stopPainting.bind(this);
+        this.wrapperBlock.onmouseleave = this.stopPainting.bind(this);
+        this.wrapperBlock.onclick = this.mouseClickHandler.bind(this);
     };
 
     createTabButton(name){
@@ -45,7 +45,7 @@ class PaintTab {
 
     addLayer(){
         const newLayer = this.layerFactory.createLayer();
-        this.layerButtonList.push(newLayer.layerButton);
+        this.layerList.push(newLayer);
         this.wrapperBlock.appendChild(newLayer.canvas.element)
 
         return newLayer;
@@ -53,8 +53,18 @@ class PaintTab {
 
     deleteLayer(layer){
         this.wrapperBlock.removeChild(layer.canvas.element);
-        let index = this.layerButtonList.indexOf(layer.layerButton);
-        this.layerButtonList.splice(index,1);
+        let index = this.layerList.indexOf(layer);
+        this.layerList.splice(index,1);
+    }
+
+    getActiveCanvas(){
+        for (let i=this.layerList.length-1; i>=0; i--) {
+            if (this.layerList[i].canvas.element.style.display !== "none") {
+                return this.layerList[i].canvas;
+            } else {
+                continue;
+            }
+        }
     }
 
     activateButton(){
@@ -123,13 +133,19 @@ class PaintTab {
     }
 
     paintWithBrush(point, size, color = '#000') {
-        this.mainCanvas.paintPoint(point, size, color);
+        let canvas = this.getActiveCanvas();
+        if (canvas){
+            this.getActiveCanvas().paintPoint(point, size, color);
+        }
     }
 
     paintWithFigure(point, size, color = "#000", figure = "Hexagon") {
-        (figure === "Circle") ? this.mainCanvas.paintPoint(point, size, color):
-            (figure === "Square")? this.mainCanvas.paintSquare(point, size, color):
-                this.mainCanvas.paintHexagon(point, size, color);
+        let canvas = this.getActiveCanvas();
+        if (canvas){
+            (figure === "Circle") ? canvas.paintPoint(point, size, color):
+                (figure === "Square")? canvas.paintSquare(point, size, color):
+                    canvas.paintHexagon(point, size, color);
+        }
     }
 
 
