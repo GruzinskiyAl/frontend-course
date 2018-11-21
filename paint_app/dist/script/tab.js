@@ -3,27 +3,27 @@
 const brashInput = document.getElementById('isBrushStatus');
 
 class PaintTab {
-    constructor({color, brushSize, isBrushStatus, figure, numId, sizes}) {
-        this.brushColor = color;
-        this.figure = figure;
-        this.brushSize = brushSize;
-        this.isBrushStatus = isBrushStatus;
-        this.paintingStatus = true;
+    constructor({paintSettings, numId, sizes}) {
+        this.paintSettings = paintSettings; // init settings
+        this.paintingStatus = false; // for paintin on mouse down
 
-        this.layerList = [];
+        this.layerList = []; // layer object aggregator
 
         this.createTabButton('Tab ' + numId);
-        this.createLayerFactory(sizes);
-        this.createWrapperBlock(sizes);
+        this.createLayerFactory(sizes); 
+        this.createWrapperBlock(sizes);  // canvas aggregator
 
-
-        brashInput.onchange = this.changeBrushStatusHandler.bind(this);
+        // painting methods
         this.wrapperBlock.onmousemove = this.mouseMoveHandler.bind(this);
         this.wrapperBlock.onmousedown = this.startPainting.bind(this);
         this.wrapperBlock.onmouseup = this.stopPainting.bind(this);
         this.wrapperBlock.onmouseleave = this.stopPainting.bind(this);
         this.wrapperBlock.onclick = this.mouseClickHandler.bind(this);
     };
+    
+    changeTabSettings(key, value) {
+        this.paintSettings[key] = value;
+    }
 
     createTabButton(name){
         this.tabButtonObj = new TabButton(name);
@@ -79,35 +79,15 @@ class PaintTab {
         return this.deleteButton;
     }
 
-    setBrushColor(color){
-        this.brushColor = color;
-    }
-
-    setBrushSize(size){
-        this.brushSize = size;
-    }
-
-    setIsBrushStatus(status){
-        this.isBrushStatus = status;
-    }
-
-    setFigure(figure){
-        this.figure = figure;
-    }
-
-    changeBrushStatusHandler(event) {
-        this.isBrushStatus = event.target.checked;
-    }
-
     mouseMoveHandler(event) {
         const point = {
             left: event.offsetX,
             top: event.offsetY
         };
 
-        if (this.isBrushStatus) {
+        if (this.paintSettings.isBrushStatus) {
             if (this.paintingStatus) {
-                this.paintWithBrush(point, this.brushSize, this.brushColor);
+                this.paintWithBrush(point, this.paintSettings.brushSize, this.paintSettings.brushColor);
             }
         }
     }
@@ -118,8 +98,8 @@ class PaintTab {
             top: event.offsetY
         };
 
-        if (!this.isBrushStatus) {
-            this.paintWithFigure(point, this.brushSize, this.brushColor, this.figure);
+        if (!this.paintSettings.isBrushStatus) {
+            this.paintWithFigure(point, this.paintSettings.brushSize, this.paintSettings.brushColor, this.paintSettings.figure);
         }
 
     }
@@ -132,14 +112,14 @@ class PaintTab {
         this.paintingStatus = false;
     }
 
-    paintWithBrush(point, size, color = '#000') {
+    paintWithBrush(point, size, color) {
         let canvas = this.getActiveCanvas();
         if (canvas){
             this.getActiveCanvas().paintPoint(point, size, color);
         }
     }
 
-    paintWithFigure(point, size, color = "#000", figure = "Hexagon") {
+    paintWithFigure(point, size, color, figure) {
         let canvas = this.getActiveCanvas();
         if (canvas){
             (figure === "Circle") ? canvas.paintPoint(point, size, color):
