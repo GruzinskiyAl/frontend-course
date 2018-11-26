@@ -28,9 +28,9 @@ class Canvas{
     }
 
     paintHexagon(point, size, color){
-        this.ctx.fillStyle = "black";
+        this.ctx.fillStyle = color;
 
-        let hexagonSize = 16/1.5;
+        let hexagonSize = size/1.5;
         this.ctx.beginPath();
         this.ctx.moveTo(point.left + hexagonSize * Math.cos(0), point.top + hexagonSize * Math.sin(0));
 

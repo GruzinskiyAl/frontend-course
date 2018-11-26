@@ -59,6 +59,99 @@
   }
 }
 
+.settings-changer {
+  &_default{
+    margin-left: 10px;
+  }
+
+  &__init-btn{
+    &_default{
+      background-color: #ccc;
+    }
+  }
+}
+
+.setting-block{
+  &_default{
+    background-color: @main-color;
+    position: absolute;
+    display: none; //must be none
+    z-index: 100;
+  }
+
+  &__closer{
+    &_default{
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    &:hover{
+      cursor: pointer;
+    }
+  }
+}
+
+.top-lvl-menu{
+  &_default{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__item{
+    &_default{
+      position: relative;
+      height: 30px;
+      width: 150px;
+      border-bottom: 1px solid black;
+    }
+
+    &:hover{
+      background-color: #ccc;
+      &>ul{
+        display: inline;
+      }
+    }
+  }
+}
+
+.sec-lvl-menu{
+  &_default{
+    position: absolute;
+    top: 0;
+    right: -150px;
+    width: 150px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+  }
+
+  &__title{
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 0 0 0 10px;
+    display: block;
+    line-height: 30px;
+
+    &:hover{
+      color: #000;
+    }
+  }
+
+  &__item{
+    height: 30px;
+    background: @main-color;
+    border-bottom: 1px solid black;
+    
+    &:hover{
+      background: #CCCCCC;
+    }
+  }
+
+}
+
+
 .tab-controller {
   &_default {
     display: flex;
@@ -229,4 +322,9 @@
   &_default{
 
   }
+}
+
+.paintapp-btn {
+  background-color: @main-color;
+  color: #111;
 }

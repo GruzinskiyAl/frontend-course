@@ -7,18 +7,16 @@
 </head>
 
 <body>
-    <div class="main-window main-window_default">
+    <div id="mainWindow" class="main-window main-window_default">
         <div class="header header_default" id="header">
-            <div class="header__title">Paint</div>
+            <div id="appTitle" class="header__title">Paint</div>
         </div>
 
-        <div class="paint-controller paint-controller_default">
+        <div id="paintController" class="paint-controller paint-controller_default">
             <div class="color-changer color-changer_default">
                 <div class="color-changer__indicator color-changer__indicator_default" id="colorIndicator"></div>
                 <input type="text" class="color-changer__input color-changer__input_default" id="colorField">
-                <button type="button" class="color-changer__accept-btn color-changer__accept-btn_default" id="colorChangeBtn">
-                    Enter
-                </button>
+                <button id="colorChangeBtn" class="color-changer__accept-btn color-changer__accept-btn_default paintapp-btn">Enter</button>
             </div>
 
             <div class="size-changer">
@@ -29,7 +27,7 @@
 
             <div class="figure-changer figure-changer_default">
                 <div class="figure-changer__menu-wrap figure-changer__menu-wrap_default">
-                    <select class="figure-changer__menu figure-changer__menu_default" id="figureMenu">
+                    <select class="figure-changer__menu figure-changer__menu_default paintapp-btn" id="figureMenu">
                         <option>Circle</option>
                         <option>Square</option>
                         <option>Hexagon</option>
@@ -40,43 +38,57 @@
             <div class="brush-changer brush-changer_default">
                 <label>
                     <input type="checkbox" name="Brush" class="brush-changer__checkbox brush-changer_default" id="isBrushStatus">
-                    Brush
+                    <span id="isBrushStatusLabel">Brush</span>
                 </label>
+            </div>
+
+            <div class="settings-changer settings-changer_default">
+                <button id="openSettings" class="settings-changer__init-btn settings-changer__init-btn_default paintapp-btn">Settings</button>
+                <div id="settingsMenuBlock" class="setting-block setting-block_default">
+                    <span id="closeSettingsBtn" class="setting-block__closer setting-block__closer_default">x</span>
+                    
+                    
+                    <ul class="top-lvl-menu top-lvl-menu_default">
+                        <li class="top-lvl-menu__item top-lvl-menu__item_default">
+                            <span class="sec-lvl-menu__title sec-lvl-menu__title_default">Theme</span>
+                            <ul class="sec-lvl-menu sec-lvl-menu_default">
+                                <li id="darkTheme" class="sec-lvl-menu__item sec-lvl-menu__item_default">Dark</li>
+                                <li id="lightTheme" class="sec-lvl-menu__item sec-lvl-menu__item_default">Light</li>
+                            </ul>
+                        </li>
+                        <li class="top-lvl-menu__item top-lvl-menu__item_default">
+                            <span class="sec-lvl-menu__title sec-lvl-menu__title_default">Lang</span>
+                            <ul class="sec-lvl-menu sec-lvl-menu_default">
+                                <li id="enLan" class="sec-lvl-menu__item sec-lvl-menu__item_default">En</li>
+                                <li id="ruLan" class="sec-lvl-menu__item sec-lvl-menu__item_default">Ru</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                </div>
             </div>
         </div>
 
 
         <div class="tab-controller tab-controller_default" id="tabController">
             <div class="tab-aggregator tab-aggregator_default" id="tabAggregator">
-                <!--<div class="tab tab_default">-->
-                    <!--<input type="button" class="tab__btn tab__btn_default" value="Tab 1">-->
-                    <!--<span class="tab__closer tab__closer_default">X</span>-->
-                <!--</div>-->
             </div>
-            <input type="button" class="create-tab-btn create-tab-btn_default" value="+" id="addTabButton">
+            <input type="button" class="create-tab-btn create-tab-btn_default paintapp-btn" value="+" id="addTabButton">
         </div>
 
         <div class="content-block content-block_default">
             <div class="layer-controller layer-controller_default">
                 <div class="layer-controller__header layer-controller__header_default">
                     <div class="layer-controller__title layer-controller__title_default">
-                        <label>Layers</label>
+                        <label id="layersLabel">Layers</label>
                     </div>
                     <button class="layer-controller__add-layer-btn layer-controller__add-layer-btn_default" id="addLayerBtn">+</button>
                 </div>
                 <div class="layer-aggregator layer-aggregator_default" id="layerAggregator">
-                    <!-- <div class="layer layer_default">
-                        <input class="layer__checkbox layer__checkbox_default" type="checkbox">
-                        <span class="layer__name layer__name_default">Layer 1</span>
-                        <span class="layer__delete-btn layer__delete-btn_default">x</span>
-                    </div> -->
                 </div>
             </div>
 
             <div class="paint-panel paint-panel_default" id=paintPanel>
-                <!--<div class="canvas-wrapper canvas-wrapper_default">-->
-                    <!--<canvas class="canvas-wrapper__canvas canvas-wrapper__canvas_default"></canvas>-->
-                <!--</div>-->
             </div>
         </div>
 
@@ -93,5 +105,6 @@
     <script src="script/layers.js"></script>
     <script src="script/tab.js"></script>
     <script src="script/tabManager.js"></script>
+    <script src="./script/settings.js"></script>
 </body>
 </html>

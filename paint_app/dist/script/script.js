@@ -32,6 +32,7 @@ function addEventListeners() {
     setColorBtn.onclick = () => {
         let color = colorField.value;
         tabManager.changeSettings("brushColor", color)
+        colorIndicator.style.backgroundColor = color;
     }
 
     sizeScale.oninput = () => {
